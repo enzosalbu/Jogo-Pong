@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/estilo.css">
+  <title>Pong game</title>
+</head>
+
+<canvas width="1350" height="635"></canvas>
+
+<body>
+
+  <script>
+    alert("Start");
+    
+
+    // Váriáveis da tela
+    var tela = document.querySelector("canvas");
+    var pincel = tela.getContext('2d');
+
+    // Variáveis da bolinha
+    var xBolinha = 650;
+    var yBolinha = 350;
+    var raio = 10;
+    var sentidox = 3;
+    var sentidoy = 3;
+
+    // Variáveis da raquete
+    var xRaquete = 360;
+    var yRaquete = 300;
+    var raqueteComprimento = 10;
+    var raqueteAltura = 60;
+    var cima = 38;
+    var baixo = 40;
+  
+
+    // Variáveis do oponente
+    var xRaqueteOponente = 930;
+    var yRaqueteOponente = 300;
+
+    // Variáveis Jogo
+    var velocidadeJogo = 10;
+    var meusPontos = 0;
+    var pontosDoOponente = 0;
+
+    function desenhaMesa() {
+
+      
+      pincel.fillStyle = "blue";
+      pincel.fillRect(350, 150, 600, 400);
+      pincel.fillStyle = "white";
+      pincel.fillRect(647, 150, 6, 400);
+      pincel.fillRect(350, 150, 600, 6);
+      pincel.fillRect(350, 150, 6, 400);
+      pincel.fillRect(350, 544, 600, 6);
+      pincel.fillRect(944, 150, 6, 400);
+      
+    }
+
+    function desenhaRaquete(xRaquete, yRaquete) {
+
+      pincel.fillStyle = "black";
+      pincel.fillRect(xRaquete, yRaquete, raqueteComprimento, raqueteAltura);
+    }
+
+    function leDoTeclado(raquete) {
+
+      if (raquete.keyCode == cima) {
+
+        yRaquete = yRaquete - 50;
+      }
+      if (raquete.keyCode == baixo) {
+
+        yRaquete = yRaquete + 50;
+      }
+
+    }
+
+    function desenhaRaqueteOponente(xRaqueteOponente, yRaqueteOponente) {
+
+      pincel.fillStyle = "black";
+      pincel.fillRect(xRaqueteOponente, yRaqueteOponente, raqueteComprimento, raqueteAltura);
+    }
+
+    function desenhaBolinha(x, y, raio) {
+
+      pincel.fillStyle = "black";
+      pincel.beginPath();
+      pincel.arc(x, y, raio, 0, 2 * 3.14);
+      pincel.fill();
+    }
+
+    function verificaColisaoBorda() {
+
+      if (xBolinha > 940) {
+        sentidox = -3;
+      }
+      if (xBolinha < 360) {
+        sentidox = 3;
+      }
+      if (yBolinha > 540) {
+        sentidoy = -3;
+      }
+      if (yBolinha < 160) {
+        sentidoy = 3;
+      }
+
+    }
+
+    function verificaColisaoRaquete() {
+
+      if (xBolinha - raio < xRaquete + raqueteComprimento &&
+        yBolinha - raio < yRaquete + raqueteAltura &&
+        yBolinha + raio > yRaquete) {
+        sentidox = 3;
+        raquetada.play();
+   
+
+      }
+
+    }
+
+    function verificaColisaoRaqueteOponente() {
+
+      if (xBolinha + raio > xRaqueteOponente &&
+        yBolinha - 160 < yRaqueteOponente + raqueteAltura &&
+        yBolinha + 50 > yRaqueteOponente - raqueteAltura) {
+        sentidox = -3;
+        raquetada.play();
+      }
+
+    }
+
+    function marcaPonto() {
+
+      if (xBolinha > 940) {
+        meusPontos = meusPontos + 1;
+        ponto.play();
+      }
+      if (xBolinha < 360) {
+        pontosDoOponente = pontosDoOponente + 1;
+        ponto.play();
+      }
+      if (meusPontos == 5) {
+        alert("PARABÉNS, VOCÊ GANHOU");
+      }
+      if (pontosDoOponente == 5) {
+        alert("Game Over");
+      }
+
+    }
+
+    function incluiPlacar() {
+
+      pincel.fillStyle = "white";
+      pincel.fillText(meusPontos, 500, 200);
+      pincel.fillText(pontosDoOponente, 800, 200);
+    }
+
+    function jogo() {
+
+      pincel.clearRect(350, 150, 600, 400);
+      
+      trilha.play();
+
+      desenhaMesa();
+
+      desenhaRaquete(xRaquete, yRaquete);
+
+      desenhaRaqueteOponente(xRaqueteOponente, yBolinha - 20);
+
+      desenhaBolinha(xBolinha, yBolinha, raio);
+
+      xBolinha = xBolinha + sentidox;
+
+      yBolinha = yBolinha + sentidoy;
+
+      verificaColisaoBorda();
+
+      verificaColisaoRaquete();
+
+      verificaColisaoRaqueteOponente();
+
+      marcaPonto();
+
+      incluiPlacar();
+    }
+    
+    const ponto = new Audio();
+    ponto.src = "./Song/ponto.mp3"
+
+    const raquetada = new Audio();
+    raquetada.src = "./Song/raquetada.mp3"
+
+    const trilha = new Audio();
+    trilha.src = "./Song/trilha.mp3"
+   
+
+    setInterval(jogo, velocidadeJogo);
+
+    document.onkeydown = leDoTeclado;
+
+  </script>
+
+</body>
+</html>
